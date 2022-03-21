@@ -1,0 +1,8 @@
+name: ml4hc_p1
+dependencies:
+  - python
+  - numpy
+  - pandas
+  - keras
+  - scikit-learn
+  - tensorflow
