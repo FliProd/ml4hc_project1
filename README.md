@@ -8,23 +8,29 @@
 
 To create the environment run:
 
-'conda env create -f environment.yml --prefix venv'
+    'conda env create -f environment.yml --prefix venv'
 
 To activate the environment run: 
 
-'conda activate venv -n ml4hc_p1'
+    'conda activate venv -n ml4hc_p1'
 
 To deactivate the environment run:
 
-'conda deactivate'
+    'conda deactivate'
 
 To update the environment run:
 
-'conda env update --prefix ./venv --file environment.yml  --prune'
+    'conda env update --prefix ./venv --file environment.yml  --prune'
 
 ## Running models
 
 Always run the models from the root directory (where the README.md resides)
+
+### RNN
+
+Set the model in the train_rnn.py file at the bottom in the function call. Then run:
+
+    python3 src/train/train_rnn.py
 
 ## Folder Structure 
 ```
