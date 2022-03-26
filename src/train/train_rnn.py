@@ -1,93 +1,106 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from torch.utils.data import DataLoader, TensorDataset
 
-import sys
-sys.path.append(".")
+
 from src.models.rnn import RNNModel
-from src.data.load_data import importData, importDataloader
-from src.train.util import progess_visualization
+from src.data.load_data import importDataloader
+from src.train.util import *
+
 
 # includes code from: https://www.kaggle.com/code/kanncaa1/recurrent-neural-network-with-pytorch/notebook
 
 
 # train rnn on specified dataset. If transfer_learning is set to True it will pretrain on dataset on then finetune on ptbdb
-def trainRNN(dataset, transfer_learning, fine_tune_dataset):
-    path_to_data = "./data/raw/"
+def trainRNN(hyperparameters, options):
     
-    input_dim = 187
-    hidden_dim = 100
-    layer_dim = 2
-    error = nn.CrossEntropyLoss()
+    # load hyperparameters in variables for readability
+    dataset_name = options['dataset_name']
+    path_to_data = options['path_to_data']
+    input_dim = hyperparameters['input_dim']
+    hidden_dim = hyperparameters['hidden_dim']
+    layer_dim = hyperparameters['layer_dim']
+    output_dim = hyperparameters['output_dim'][dataset_name]
+    batch_size = hyperparameters['batch_size']
+    num_epochs = hyperparameters['num_epochs']
+    learning_rate = hyperparameters['learning_rate']
     
-    if dataset == 'mitbih':
-        output_dim = 5 
-    elif dataset == 'ptbdb':
-        output_dim = 2
-    else:
-        raise ValueError(dataset, 'is not a valid dataset. Choose mitbih or ptbdb')
+    # for storage and logging
+    model_name = 'RNN_{}_{}_{}_{}'.format(dataset_name, num_epochs, hidden_dim, layer_dim)
+
     
-    # batch_size, epoch and iteration
-    batch_size = 100
-    num_epochs = 100
-    
+
      # get data loaders
     (train_loader, test_loader) = importDataloader(path_to_data=path_to_data,
-                                                   dataset=dataset,
+                                                   dataset=dataset_name,
                                                    batch_size=batch_size)
+    
     
     # Create RNN & Optimizer
     model = RNNModel(input_dim, hidden_dim, layer_dim, output_dim)
-    learning_rate = 0.05
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     
+    
+    # train RNN
+    try:
+        model = torch.load(options['saved_model_path'] + model_name)
+        print('loaded model')
+        return model
+    except IOError:
+        print('training from scratch')
+        
     (iteration_list, loss_list, accuracy_list) = trainingLoop(model=model, 
                                                               optimizer=optimizer,
-                                                              error=error, 
                                                               num_epochs=num_epochs,
-                                                              dataset=dataset,
                                                               train_loader=train_loader,
                                                               test_loader=test_loader)
     
-    visualization_name = 'train_{}_{}_{}_{}%'.format(dataset, num_epochs, hidden_dim, layer_dim)
-    progess_visualization(iteration_list, loss_list, accuracy_list, visualization_name)
     
+    # store model & learning info as .csv
+    torch.save(model, options['saved_model_path'] + model_name)
+    #storeTrainInfo(iteration_list, loss_list, accuracy_list, model_name)
     
+    torch.save(model, options['saved_model_path'] + model_name)
+
     
-    if transfer_learning:
-        if fine_tune_dataset == 'mitbih':
-            output_dim = 5 
-        elif fine_tune_dataset == 'ptbdb':
-            output_dim = 2
-            
-        model.fc = nn.Linear(hidden_dim, output_dim)
+    if options['finetune']:
+        
+        fine_tune_dataset_name = options['fine_tune_dataset_name']
+        fine_tune_output_dim = hyperparameters['output_dim'][options['fine_tune_dataset_name']]
+        
+        # replace last layer to accomodate for new output dimensions
+        model.fc = nn.Linear(hidden_dim, fine_tune_output_dim)
         fine_tune_optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
+        # load fine tune dataset
         (fine_tune_train_loader, fine_tune_test_loader) = importDataloader(path_to_data=path_to_data,
-                                                                            dataset=fine_tune_dataset,
+                                                                            dataset=fine_tune_dataset_name,
                                                                             batch_size=batch_size)
+        
+        # finetune RNN
         (iteration_list, loss_list, accuracy_list) =  trainingLoop(model=model, 
-                    optimizer=fine_tune_optimizer, 
-                    error=error, 
-                    num_epochs=num_epochs,
-                    dataset=fine_tune_dataset,
-                    train_loader=fine_tune_train_loader,
-                    test_loader=fine_tune_test_loader)
+                                                                    optimizer=fine_tune_optimizer, 
+                                                                    num_epochs=num_epochs,
+                                                                    train_loader=fine_tune_train_loader,
+                                                                    test_loader=fine_tune_test_loader)
         
-        visualization_name = 'fine_tune_{}_{}_{}_{}%'.format(fine_tune_dataset, num_epochs, hidden_dim, layer_dim)
-        progess_visualization(iteration_list, loss_list, accuracy_list, visualization_name)
+        torch.save(model, options['saved_model_path'] + model_name)
+        #storeTrainInfo(iteration_list, loss_list, accuracy_list, 'fine_tune_' + model_name)
+    
+    return model
 
         
 
 
 
 
-def trainingLoop(model, optimizer, error, num_epochs, dataset, train_loader, test_loader):
+def trainingLoop(model, optimizer, num_epochs, train_loader, test_loader):
     #model summary
     print(model)
     
-    # for visualization
+    error = nn.CrossEntropyLoss()
+    
+    # for progress analysis
     loss_list = []
     iteration_list = []
     accuracy_list = []
@@ -98,7 +111,6 @@ def trainingLoop(model, optimizer, error, num_epochs, dataset, train_loader, tes
         for i, (seq, labels) in enumerate(train_loader):
             
             seq = Variable(torch.permute(seq, (0, 2, 1)))
-
             labels = Variable(labels)
             
             # Clear gradients
@@ -107,20 +119,14 @@ def trainingLoop(model, optimizer, error, num_epochs, dataset, train_loader, tes
             # Forward propagation
             outputs = model(seq)
 
-            
-            # Calculate softmax and ross entropy loss
-
+            # Calculate softmax and ross entropy loss & respective gradients
             loss = error(outputs, labels)
-            
-            # Calculating gradients
             loss.backward()
 
-            
             # Update parameters
             optimizer.step()
   
             count += 1
-            
             if count % 250 == 0:
                 # Calculate Accuracy         
                 correct = 0
@@ -135,15 +141,12 @@ def trainingLoop(model, optimizer, error, num_epochs, dataset, train_loader, tes
                     # Get predictions from the maximum value
                     predicted = torch.max(outputs.data, 1)[1]
 
-                    # Total number of labels
+                    # stats for progress analysis
                     total += labels.size(0)
-
-                    
                     correct += (predicted == labels).sum()
 
-                    
+
                 accuracy = 100 * correct / float(total)
-                
                 # store loss and iteration
                 loss_list.append(loss.data)
                 iteration_list.append(count)
@@ -157,6 +160,4 @@ def trainingLoop(model, optimizer, error, num_epochs, dataset, train_loader, tes
 
 
     
-    
-trainRNN(dataset='mitbih', transfer_learning=True, fine_tune_dataset='ptbdb')
 
