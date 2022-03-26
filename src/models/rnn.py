@@ -4,10 +4,9 @@ import torch.nn as nn
 # modeled after: https://www.kaggle.com/code/kanncaa1/recurrent-neural-network-with-pytorch/notebook
 
 class RNNModel(nn.Module):
-    def __init__(self, input_dim, hidden_dim, layer_dim, output_dim, num_classes):
+    def __init__(self, input_dim, hidden_dim, layer_dim, output_dim):
         super(RNNModel, self).__init__()
         self.sigmoid = nn.Sigmoid()
-        self.num_classes = num_classes
 
     # Number of hidden dimensions
         self.hidden_dim = hidden_dim
@@ -29,8 +28,7 @@ class RNNModel(nn.Module):
         # One time step
         out, hn = self.rnn(x, h0)
         out = self.fc(out[:, -1, :])
-        if self.num_classes == 2:
-            out = self.sigmoid(out)
+     
         return out
     
     def init_hidden(self, batch_size):
