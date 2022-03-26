@@ -8,7 +8,7 @@ params = {
                 'layer_dim': 2,
                 'output_dim': {'mitbih': 5, 'ptbdb': 2},
                 'batch_size': 100,
-                'num_epochs': 2,
+                'num_epochs': 30,
                 'learning_rate': 0.05,
                 },
     'Transformer': {

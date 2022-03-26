@@ -9,6 +9,7 @@ def main():
     options['path_to_data'] = config['data_dir']
     options['dataset_name'] = config['dataset_name']
     options['saved_model_path'] = config['saved_model_path']
+    options['figure_path'] = config['figure_path']
     
     # call training function for model specified in config/config.py
     # pass hyperparameters as named parameters

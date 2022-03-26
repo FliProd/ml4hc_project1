@@ -25,6 +25,7 @@ config['model'] = 'VanillaRNN'
 
 
 """
-Path to serialized models
+Path to serialized models & figures & stuff
 """
 config['saved_model_path'] = './models/'
+config['figure_path'] = './reports/figures/'

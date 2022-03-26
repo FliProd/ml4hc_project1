@@ -1,3 +1,4 @@
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -5,7 +6,7 @@ from torch.autograd import Variable
 
 from src.models.rnn import RNNModel
 from src.data.load_data import importDataloader
-from src.train.util import *
+from src.train.util import progess_visualization
 
 
 # includes code from: https://www.kaggle.com/code/kanncaa1/recurrent-neural-network-with-pytorch/notebook
@@ -58,9 +59,8 @@ def trainRNN(hyperparameters, options):
     
     # store model & learning info as .csv
     torch.save(model, options['saved_model_path'] + model_name)
-    #storeTrainInfo(iteration_list, loss_list, accuracy_list, model_name)
-    
-    torch.save(model, options['saved_model_path'] + model_name)
+    df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
+    df.to_csv(path_or_buf=options['figure_path'] + model_name.csv)        
 
     
     if options['finetune']:
@@ -85,8 +85,10 @@ def trainRNN(hyperparameters, options):
                                                                     test_loader=fine_tune_test_loader)
         
         torch.save(model, options['saved_model_path'] + model_name)
-        #storeTrainInfo(iteration_list, loss_list, accuracy_list, 'fine_tune_' + model_name)
-    
+        df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
+        df.to_csv(path_or_buf=options['figure_path'] + 'fine_tune' + model_name.csv)        
+
+        
     return model
 
         
