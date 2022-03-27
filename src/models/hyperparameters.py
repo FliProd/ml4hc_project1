@@ -21,4 +21,22 @@ params = {
                 'mlp_dropout':0.4,
                 'dropout':0.25,
     },
+        'BidirectionalLSTM'   : {
+                'input_dim': config['sequence_length'],
+                'hidden_dim': 100,
+                'layer_dim': 2,
+                'output_dim': {'mitbih': 5, 'ptbdb': 2},
+                'batch_size': 100,
+                'num_epochs': 30,
+                'learning_rate': 0.005,
+                },
+        'Autoencoder'   : {
+                'input_dim': config['sequence_length'],
+                'hidden_dim': 100,
+                'layer_dim': 2,
+                'output_dim': {'mitbih': 5, 'ptbdb': 2},
+                'batch_size': 100,
+                'num_epochs': 30,
+                'learning_rate': 0.0005,
+                }
 }

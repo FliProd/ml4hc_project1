@@ -4,7 +4,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 
 
-from src.models.lstm import BiLSTMModel
+from src.models.autoencoder import AutoEncoder
 from src.data.load_data import importDataloader
 from src.train.util import progess_visualization
 
@@ -12,8 +12,8 @@ from src.train.util import progess_visualization
 # includes code from: https://www.kaggle.com/code/kanncaa1/recurrent-neural-network-with-pytorch/notebook
 
 
-# train lstm on specified dataset. If transfer_learning is set to True it will pretrain on dataset on then finetune on ptbdb
-def trainLSTM(hyperparameters, options):
+# train autoencoder on specified dataset. 
+def trainAutoencoder(hyperparameters, options):
     
     # load hyperparameters in variables for readability
     dataset_name = options['dataset_name']
@@ -27,7 +27,7 @@ def trainLSTM(hyperparameters, options):
     learning_rate = hyperparameters['learning_rate']
     
     # for storage and logging
-    model_name = 'LSTM_{}_{}_{}_{}'.format(dataset_name, num_epochs, hidden_dim, layer_dim)
+    model_name = 'Autoencoder_{}_{}_{}_{}'.format(dataset_name, num_epochs, hidden_dim, layer_dim)
 
     
 
@@ -37,12 +37,12 @@ def trainLSTM(hyperparameters, options):
                                                    batch_size=batch_size)
     
     
-    # Create LSTM & Optimizer
-    model = BiLSTMModel(input_dim, hidden_dim, layer_dim, output_dim)
+    # Create Autoencoder & Optimizer
+    model = AutoEncoder(input_dim, hidden_dim, layer_dim, output_dim)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     
     
-    # train LSTM
+    # train Autoencoder
     try:
         model = torch.load(options['saved_model_path'] + model_name)
         print('loaded model')
