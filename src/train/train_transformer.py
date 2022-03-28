@@ -1,8 +1,6 @@
 from types import new_class
 from tensorflow import keras
-from tensorflow.keras import layers
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
-from torch.utils.data import dataset
 
 from src.data.load_data import importData
 from src.models.transformer import build_model
@@ -21,13 +19,11 @@ def trainTransformer(hyperparameters, options):
     mlp_units = hyperparameters['mlp_units']
     mlp_dropout = hyperparameters['mlp_dropout']
     dropout = hyperparameters['dropout']
+    batch_size = hyperparameters['batch_size']
+    num_epochs = hyperparameters['num_epochs']
        
     (X, Y, X_test, Y_test) = importData(path_to_data, dataset)
 
-    # batch_size, epoch and iteration
-    batch_size = 100
-    n_iters = 20000
-    num_epochs = int(n_iters/(len(X)/batch_size))
 
     input_shape = X.shape[1:]
     model = build_model(

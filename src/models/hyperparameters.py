@@ -8,7 +8,7 @@ params = {
                 'layer_dim': 2,
                 'output_dim': {'mitbih': 5, 'ptbdb': 2},
                 'batch_size': 100,
-                'num_epochs': 30,
+                'num_epochs': 1500,
                 'learning_rate': 0.05,
                 },
     'Transformer': {
@@ -20,6 +20,8 @@ params = {
                 'mlp_units':[256],
                 'mlp_dropout':0.4,
                 'dropout':0.25,
+                'batch_size': 100,
+                'num_epochs': 30,
     },
         'BidirectionalLSTM'   : {
                 'input_dim': config['sequence_length'],
