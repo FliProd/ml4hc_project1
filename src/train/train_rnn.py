@@ -45,27 +45,24 @@ def trainRNN(hyperparameters, options):
     try:
         model = torch.load(options['saved_model_path'] + model_name)
         print('loaded model')
-        return model
     except IOError:
         print('training from scratch')
-        
-    (iteration_list, loss_list, accuracy_list) = trainingLoop(model=model, 
+        (iteration_list, loss_list, accuracy_list) = trainingLoop(model=model, 
                                                               optimizer=optimizer,
                                                               num_epochs=num_epochs,
                                                               train_loader=train_loader,
                                                               test_loader=test_loader)
-    
-    
-    # store model & learning info as .csv
-    torch.save(model, options['saved_model_path'] + model_name)
-    df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
-    df.to_csv(path_or_buf=options['figure_path'] + model_name + '.csv')        
+        # store model & learning info as .csv
+        torch.save(model, options['saved_model_path'] + model_name)
+        df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
+        df.to_csv(path_or_buf=options['figure_path'] + model_name + '.csv')        
 
     
     if options['finetune']:
         
-        fine_tune_dataset_name = options['fine_tune_dataset_name']
-        fine_tune_output_dim = hyperparameters['output_dim'][options['fine_tune_dataset_name']]
+        fine_tune_dataset_name = options['finetune_dataset_name']
+        fine_tune_output_dim = hyperparameters['output_dim'][fine_tune_dataset_name]
+        num_epochs = hyperparameters['num_epochs'][fine_tune_dataset_name]
         
         # replace last layer to accomodate for new output dimensions
         model.fc = nn.Linear(hidden_dim, fine_tune_output_dim)
@@ -83,10 +80,11 @@ def trainRNN(hyperparameters, options):
                                                                     train_loader=fine_tune_train_loader,
                                                                     test_loader=fine_tune_test_loader)
         
-        torch.save(model, options['saved_model_path'] + model_name)
+        torch.save(model, 'finetuned_' + options['saved_model_path'] + model_name)
         df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
         df.to_csv(path_or_buf=options['figure_path'] + 'fine_tune' + model_name + '.csv')        
 
+        return model
         
     return model
 
