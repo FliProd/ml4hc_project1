@@ -46,8 +46,8 @@ def trainTransformer(hyperparameters, options):
     model.summary()
     
     try:
-        model_name = 'Transformer_{}_{}_{}_{}'.format(dataset, num_epochs, head_size, num_heads, num_transformer_blocks, ff_dim, mlp_units)
-        reconstructed_model = keras.models.load_model(options['saved_model_path'] + model_name + dataset + ".h5")
+        model_name = 'Transformer_{}_{}_{}_{}_{}_{}_{}'.format(dataset, num_epochs, head_size, num_heads, num_transformer_blocks, ff_dim, mlp_units)
+        reconstructed_model = keras.models.load_model(options['saved_model_path'] + model_name + ".h5")
         print('loaded wheights') 
         return reconstructed_model
     except IOError:
