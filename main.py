@@ -9,7 +9,7 @@ import torch
 from torch.nn.functional import softmax
 from torch.autograd import Variable
 
-from sklearn.metrics import accuracy_score, roc_curve, roc_auc_score, precision_recall_curve
+from sklearn.metrics import accuracy_score, roc_curve, roc_auc_score, precision_recall_curve, average_precision_score
 from matplotlib import pyplot as plt
 
 
@@ -58,13 +58,17 @@ def evaluate(model, model_name):
     auprc = []
     
     accuracy = accuracy_score(Y_test, prediction)
+    print("Accuracy:", accuracy)
+    
     if dataset == 'ptbdb':
         auroc = roc_curve(Y_test, prediction_score)
         auroc_score = roc_auc_score(Y_test, prediction_score)
         auprc = precision_recall_curve(Y_test, prediction_score)
+        auprc_avg = average_precision_score(Y_test, prediction_score)
     
         print("Accuracy:", accuracy)
         print("AUROC Score:", auroc_score)
+        print("AUPRC Score:", auprc_avg)
         
             
         plt.xlim([0, 1])

@@ -8,7 +8,7 @@ params = {
                 'layer_dim': 2,
                 'output_dim': {'mitbih': 5, 'ptbdb': 2},
                 'batch_size': 100,
-                'num_epochs': 1500,
+                'num_epochs': {'mitbih': 100, 'ptbdb': 1000},
                 'learning_rate': 0.05,
                 },
     'Transformer': {
@@ -29,7 +29,7 @@ params = {
                 'layer_dim': 2,
                 'output_dim': {'mitbih': 5, 'ptbdb': 2},
                 'batch_size': 100,
-                'num_epochs': 30,
+                'num_epochs': {'mitbih': 100, 'ptbdb': 1000},
                 'learning_rate': 0.005,
                 },
         'Autoencoder'   : {
@@ -38,7 +38,7 @@ params = {
                 'layer_dim': 2,
                 'output_dim': {'mitbih': 5, 'ptbdb': 2},
                 'batch_size': 100,
-                'num_epochs': 30,
+                'num_epochs': {'mitbih': 100, 'ptbdb': 1000},
                 'learning_rate': 0.0005,
                 }
 }
