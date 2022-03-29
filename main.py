@@ -53,33 +53,37 @@ def evaluate(model, model_name):
     prediction = prediction_class_scores.argmax(axis=1)
     prediction_score = prediction_class_scores[:,1]
 
+    auroc  = []
+    auroc_score = 0
+    auprc = []
+    
     accuracy = accuracy_score(Y_test, prediction)
     if dataset == 'ptbdb':
         auroc = roc_curve(Y_test, prediction_score)
         auroc_score = roc_auc_score(Y_test, prediction_score)
         auprc = precision_recall_curve(Y_test, prediction_score)
     
-    print("Accuracy:", accuracy)
-    print("AUROC Score:", auroc_score)
-    
+        print("Accuracy:", accuracy)
+        print("AUROC Score:", auroc_score)
         
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.plot(auroc[0], auroc[1])
-    plt.xlabel("FPR")
-    plt.ylabel("TPR")
-    plt.title(name + "AUROC")
-    plt.savefig(config['figure_path'] + 'ROC' + name + '.png')
-    plt.show()
-    
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.plot(auprc[0], auprc[1])
-    plt.xlabel("Recall")
-    plt.ylabel("Precision")
-    plt.title(name + "AUPRC")
-    plt.savefig(config['figure_path'] + 'PRC' + name + '.png')
-    plt.show()
+            
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.plot(auroc[0], auroc[1])
+        plt.xlabel("FPR")
+        plt.ylabel("TPR")
+        plt.title(name + "AUROC")
+        plt.savefig(config['figure_path'] + 'ROC' + name + '.png')
+        plt.show()
+        
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.plot(auprc[0], auprc[1])
+        plt.xlabel("Recall")
+        plt.ylabel("Precision")
+        plt.title(name + "AUPRC")
+        plt.savefig(config['figure_path'] + 'PRC' + name + '.png')
+        plt.show()
     
     return auprc, auroc
 
