@@ -6,31 +6,40 @@
 
 ### Setup
 
+#### Environment
 To create the environment run:
 
-    'conda env create -f environment.yml --prefix venv'
+    conda env create -f environment.yml --prefix venv
 
 To activate the environment run: 
 
-    'conda activate venv -n ml4hc_p1'
+    conda activate venv -n ml4hc_p1
 
 To deactivate the environment run:
 
-    'conda deactivate'
+    conda deactivate
 
 To update the environment run:
 
-    'conda env update --prefix ./venv --file environment.yml  --prune'
+    conda env update --prefix ./venv --file environment.yml  --prune
+
+#### Data
+
+Download the data.zip file from moodle and store the .csv files in the data/raw/ directory.
 
 ## Running models
 
-Always run the models from the root directory (where the README.md resides)
+For most models just set the appropriate value for config['model'] in config/config.py. The hyperparameters can be set in the models/hyperparameters.py file. Then to actually train/evaluate the model execute:
+    
+    python main.py
 
-### RNN
+This will then call the appropriate training function which either loads wheights from a stored model with the same hyperparameters or trains it from scratch. After loading/training the model main.py also evaluates it according to the dataset.
 
-Set the model in the train_rnn.py file at the bottom in the function call. Then run:
 
-    python3 src/train/train_rnn.py
+For ensemble and our cnn just run:
+    python train_cnn.py
+    python ensemble.py
+
 
 ## Folder Structure 
 ```

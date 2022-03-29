@@ -14,18 +14,21 @@ import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, auc, precision_recall_curve, roc_curve
 from src.data.load_data import importData
 
+import os
  
 # load models from file
 def load_all_models(model_list):
     all_models = list()
     for i in model_list:
-      filename = '/content/' + i
       try:
-        model = load_model(filename)
+        model = load_model('.' + i)
+        all_models.append(model)
       except:
-        model = torch.load('/content/' + i)
-      all_models.append(model)
-      print('>loaded %s' % filename)
+        try:
+          model = torch.load('.' + i)
+          all_models.append(model)
+        except:
+          print('model not found')
     return all_models
  
 # create stacked model input dataset as outputs from the ensemble
@@ -92,7 +95,7 @@ model_list_ptbdb = ["/models/Autoencoder_ptbdb_1500_20_2", "/models/RNN_ptbdb_10
 model_list_mitbih = ["/models/LSTM_mitbih_100_100_2", "/models/Autoencoder_mitbih_100_30_2", "/models/RNN_mitbih_1500_100_2", "/models/cnn_mitbih.h5"]
 
 #change following 2 lines to switch dataset
-(_, _, X_test, Y_test) = importData("/src/data", "mitbih")
+(_, _, X_test, Y_test) = importData("./data/raw/", "mitbih")
 members = load_all_models(model_list_mitbih)
 
 print("Loaded %d models" % len(members))

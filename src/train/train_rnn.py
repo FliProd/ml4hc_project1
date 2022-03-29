@@ -80,7 +80,7 @@ def trainRNN(hyperparameters, options):
                                                                     train_loader=fine_tune_train_loader,
                                                                     test_loader=fine_tune_test_loader)
         
-        torch.save(model, 'finetuned_' + options['saved_model_path'] + model_name)
+        torch.save(model,options['saved_model_path'] + 'finetuned_' + model_name)
         df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
         df.to_csv(path_or_buf=options['figure_path'] + 'fine_tune' + model_name + '.csv')        
 

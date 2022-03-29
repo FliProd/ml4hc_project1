@@ -53,8 +53,9 @@ def get_CNN_model(dataset):
 
 
 def run_cnn(dataset):
-  (X, Y, X_test, Y_test) = importData("/src/data", dataset)
-  model = get_CNN_model()
+  (X, Y, X_test, Y_test) = importData("./data/raw/", dataset)
+  model = get_CNN_model(dataset)
+  print(model.summary())
   file_path = "baseline_cnn_mitbih.h5"
   checkpoint = ModelCheckpoint(file_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
   early = EarlyStopping(monitor="val_acc", mode="max", patience=5, verbose=1)
