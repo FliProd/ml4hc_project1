@@ -34,7 +34,7 @@ params = {
                 },
         'Autoencoder'   : {
                 'input_dim': config['sequence_length'],
-                'hidden_dim': 100,
+                'hidden_dim': 30,
                 'layer_dim': 2,
                 'output_dim': {'mitbih': 5, 'ptbdb': 2},
                 'batch_size': 100,
