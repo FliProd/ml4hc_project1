@@ -22,7 +22,7 @@ def trainRNN(hyperparameters, options):
     layer_dim = hyperparameters['layer_dim']
     output_dim = hyperparameters['output_dim'][dataset_name]
     batch_size = hyperparameters['batch_size']
-    num_epochs = hyperparameters['num_epochs']
+    num_epochs = hyperparameters['num_epochs'][dataset_name]
     learning_rate = hyperparameters['learning_rate']
     
     # for storage and logging

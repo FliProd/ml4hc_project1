@@ -5,9 +5,10 @@ config = dict()
 
 """
 Data related settings 
+Available datasets: ptbdb, mitbih
 """
 config['data_dir'] = './data/raw/'
-config['dataset_name'] = 'ptbdb'
+config['dataset_name'] = 'mitbih'
 config['transfer_learning_options'] = {
     'finetune_dataset_name': 'ptbdb',
     'finetune': False
@@ -21,7 +22,7 @@ config['sequence_length'] = 187
 Model related settings 
 Available models: VanillaRNN, Transformer, Autoencoder, BidirectionalLSTM
 """
-config['model'] = 'Autoencoder'
+config['model'] = 'BidirectionalLSTM'
 
 config['pytorch_models'] = ['BidirectionalLSTM', 'Autoencoder', 'VanillaRNN']
 config['keras_models'] = ['Transformer']
