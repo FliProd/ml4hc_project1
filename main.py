@@ -35,8 +35,14 @@ def main():
 # stores RO curve and PR curve in reports/figures
 def evaluate(model, model_name):
     dataset = config['dataset_name']
+    fine_tune = config['transfer_learning_options']['finetune']
+    fine_tune_dataset = config['transfer_learning_options']['finetune_dataset_name']
     
-    (_, _, X_test, Y_test) = importData(config['data_dir'], config['dataset_name'])
+
+    if fine_tune:
+        (_, _, X_test, Y_test) = importData(config['data_dir'], fine_tune_dataset)
+    else:
+        (_, _, X_test, Y_test) = importData(config['data_dir'], dataset)
 
     
     if model_name in config['keras_models']:
@@ -59,8 +65,10 @@ def evaluate(model, model_name):
     
     accuracy = accuracy_score(Y_test, prediction)
     print("Accuracy:", accuracy)
+
+
     
-    if dataset == 'ptbdb':
+    if dataset == 'ptbdb' or (config['transfer_learning_options']['finetune'] and config['transfer_learning_options']['finetune_dataset_name'] == 'ptbdb'):
         auroc = roc_curve(Y_test, prediction_score)
         auroc_score = roc_auc_score(Y_test, prediction_score)
         auprc = precision_recall_curve(Y_test, prediction_score)
