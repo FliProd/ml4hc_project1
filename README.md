@@ -13,7 +13,7 @@ To create the environment run:
 
 To activate the environment run: 
 
-    conda activate venv -n ml4hc_p1
+    conda activate ./venv
 
 To deactivate the environment run:
 
@@ -37,6 +37,7 @@ This will then call the appropriate training function which either loads wheight
 
 
 For ensemble and our cnn just run:
+
     python train_cnn.py
     python ensemble.py
 
