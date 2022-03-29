@@ -68,15 +68,9 @@ def evaluate(model, model_name):
     print("Accuracy:", accuracy)
     
     
-    
-    
-    
     if dataset == 'ptbdb' or (config['transfer_learning_options']['finetune'] and config['transfer_learning_options']['finetune_dataset_name'] == 'ptbdb'):
 
-
-
-
-
+        auroc = roc_curve(Y_test, prediction_score)
         auroc_score = roc_auc_score(Y_test, prediction_score)
         auprc = precision_recall_curve(Y_test, prediction_score)
         auprc_avg = average_precision_score(Y_test, prediction_score)
