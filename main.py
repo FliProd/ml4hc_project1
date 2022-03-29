@@ -99,7 +99,7 @@ def evaluate(model, model_name):
         plt.show()
         
         df = pd.DataFrame(list(zip(auroc[0],auroc[1],auprc[0],auprc[1])))
-        df.to_csv(path_or_buf=config['figure_path'] + model_name + "AUROC/AUPRC" + '.csv') 
+        df.to_csv(path_or_buf=config['figure_path'] + model_name + "_AUROC_AUPRC" + '.csv') 
     
     return auprc, auroc
 
