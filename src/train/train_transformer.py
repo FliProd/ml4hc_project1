@@ -54,7 +54,7 @@ def trainTransformer(hyperparameters, options):
         print('training from scratch')
 
     #add callbacks for saving model, early stopping and dynamic learning rate
-    checkpoint = ModelCheckpoint(options['saved_model_path'] + model_name + dataset + ".h5", monitor='val_sparse_categorical_accuracy', verbose=1, save_best_only=True, mode='max')
+    checkpoint = ModelCheckpoint(options['saved_model_path'] + model_name + ".h5", monitor='val_sparse_categorical_accuracy', verbose=1, save_best_only=True, mode='max')
     early = EarlyStopping(monitor="val_sparse_categorical_accuracy", mode="max", patience=5, verbose=1)
     redonplat = ReduceLROnPlateau(monitor="sparse_categorical_accuracy", mode="max", patience=3, verbose=2)
 
