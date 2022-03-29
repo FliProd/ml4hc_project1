@@ -97,9 +97,13 @@ def evaluate(model, model_name):
         plt.title(name + "AUPRC")
         plt.savefig(config['figure_path'] + 'PRC' + name + '.png')
         plt.show()
-        
-        df = pd.DataFrame(list(zip(auroc[0],auroc[1],auprc[0],auprc[1])))
-        df.to_csv(path_or_buf=config['figure_path'] + model_name + "_AUROC_AUPRC" + '.csv') 
+    
+
+        df = pd.DataFrame(list(zip(auroc[0],auroc[1])))
+        df.to_csv(path_or_buf=config['figure_path'] + model_name + "_AUROC" + '.csv') 
+
+        df = pd.DataFrame(list(zip(auprc[0],auprc[1])))
+        df.to_csv(path_or_buf=config['figure_path'] + model_name + "_AUPRC" + '.csv') 
     
     return auprc, auroc
 

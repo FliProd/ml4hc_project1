@@ -22,7 +22,7 @@ config['sequence_length'] = 187
 Model related settings 
 Available models: VanillaRNN, Transformer, Autoencoder, BidirectionalLSTM
 """
-config['model'] = 'Autoencoder'
+config['model'] = 'BidirectionalLSTM'
 
 config['pytorch_models'] = ['BidirectionalLSTM', 'Autoencoder', 'VanillaRNN']
 config['keras_models'] = ['Transformer']
