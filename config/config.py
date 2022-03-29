@@ -5,6 +5,7 @@ config = dict()
 
 """
 Data related settings 
+Available datasets: ptbdb, mitbih
 """
 config['data_dir'] = './data/raw/'
 config['dataset_name'] = 'ptbdb'

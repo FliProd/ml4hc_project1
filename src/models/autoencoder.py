@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 
-#inspired by https://curiousily.com/posts/time-series-anomaly-detection-using-lstm-autoencoder-with-pytorch-in-python/
+""" inspired by https://curiousily.com/posts/time-series-anomaly-detection-using-lstm-autoencoder-with-pytorch-in-python/
+and https://github.com/JulesBelveze/time-series-autoencoder """
 
 class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers,output_size):

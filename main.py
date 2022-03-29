@@ -9,8 +9,9 @@ import torch
 from torch.nn.functional import softmax
 from torch.autograd import Variable
 
-from sklearn.metrics import accuracy_score, roc_curve, roc_auc_score, precision_recall_curve
+from sklearn.metrics import accuracy_score, roc_curve, roc_auc_score, precision_recall_curve, average_precision_score
 from matplotlib import pyplot as plt
+import pandas as pd
 
 
 def main():
@@ -35,8 +36,14 @@ def main():
 # stores RO curve and PR curve in reports/figures
 def evaluate(model, model_name):
     dataset = config['dataset_name']
+    fine_tune = config['transfer_learning_options']['finetune']
+    fine_tune_dataset = config['transfer_learning_options']['finetune_dataset_name']
     
-    (_, _, X_test, Y_test) = importData(config['data_dir'], config['dataset_name'])
+
+    if fine_tune:
+        (_, _, X_test, Y_test) = importData(config['data_dir'], fine_tune_dataset)
+    else:
+        (_, _, X_test, Y_test) = importData(config['data_dir'], dataset)
 
     
     if model_name in config['keras_models']:
@@ -53,33 +60,46 @@ def evaluate(model, model_name):
     prediction = prediction_class_scores.argmax(axis=1)
     prediction_score = prediction_class_scores[:,1]
 
+    auroc  = []
+    auroc_score = 0
+    auprc = []
+    
     accuracy = accuracy_score(Y_test, prediction)
-    if dataset == 'ptbdb':
+    print("Accuracy:", accuracy)
+    
+    
+    if dataset == 'ptbdb' or (config['transfer_learning_options']['finetune'] and config['transfer_learning_options']['finetune_dataset_name'] == 'ptbdb'):
+
         auroc = roc_curve(Y_test, prediction_score)
         auroc_score = roc_auc_score(Y_test, prediction_score)
         auprc = precision_recall_curve(Y_test, prediction_score)
+        auprc_avg = average_precision_score(Y_test, prediction_score)
     
-    print("Accuracy:", accuracy)
-    print("AUROC Score:", auroc_score)
-    
+        print("Accuracy:", accuracy)
+        print("AUROC Score:", auroc_score)
+        print("AUPRC Score:", auprc_avg)
         
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.plot(auroc[0], auroc[1])
-    plt.xlabel("FPR")
-    plt.ylabel("TPR")
-    plt.title(name + "AUROC")
-    plt.savefig(config['figure_path'] + 'ROC' + name + '.png')
-    plt.show()
-    
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.plot(auprc[0], auprc[1])
-    plt.xlabel("Recall")
-    plt.ylabel("Precision")
-    plt.title(name + "AUPRC")
-    plt.savefig(config['figure_path'] + 'PRC' + name + '.png')
-    plt.show()
+            
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.plot(auroc[0], auroc[1])
+        plt.xlabel("FPR")
+        plt.ylabel("TPR")
+        plt.title(name + "AUROC")
+        plt.savefig(config['figure_path'] + 'ROC' + name + '.png')
+        plt.show()
+        
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.plot(auprc[0], auprc[1])
+        plt.xlabel("Recall")
+        plt.ylabel("Precision")
+        plt.title(name + "AUPRC")
+        plt.savefig(config['figure_path'] + 'PRC' + name + '.png')
+        plt.show()
+        
+        df = pd.DataFrame(list(zip(auroc[0],auroc[1],auprc[0],auprc[1])))
+        df.to_csv(path_or_buf=config['figure_path'] + model_name + "_AUROC_AUPRC" + '.csv') 
     
     return auprc, auroc
 

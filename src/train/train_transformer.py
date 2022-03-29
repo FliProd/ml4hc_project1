@@ -46,15 +46,15 @@ def trainTransformer(hyperparameters, options):
     model.summary()
     
     try:
-        print('searchin for', options['saved_model_path'] + "keras_transformer_" + dataset + ".h5")
-        reconstructed_model = keras.models.load_model(options['saved_model_path'] + "keras_transformer_" + dataset + ".h5")
+        model_name = 'Transformer_{}_{}_{}_{}_{}_{}_{}'.format(dataset, num_epochs, head_size, num_heads, num_transformer_blocks, ff_dim, mlp_units)
+        reconstructed_model = keras.models.load_model(options['saved_model_path'] + model_name + ".h5")
         print('loaded wheights') 
         return reconstructed_model
     except IOError:
         print('training from scratch')
 
     #add callbacks for saving model, early stopping and dynamic learning rate
-    checkpoint = ModelCheckpoint("./models/keras_transformer_" + dataset + ".h5", monitor='val_sparse_categorical_accuracy', verbose=1, save_best_only=True, mode='max')
+    checkpoint = ModelCheckpoint(options['saved_model_path'] + model_name + dataset + ".h5", monitor='val_sparse_categorical_accuracy', verbose=1, save_best_only=True, mode='max')
     early = EarlyStopping(monitor="val_sparse_categorical_accuracy", mode="max", patience=5, verbose=1)
     redonplat = ReduceLROnPlateau(monitor="sparse_categorical_accuracy", mode="max", patience=3, verbose=2)
 

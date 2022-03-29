@@ -6,10 +6,8 @@ from torch.autograd import Variable
 
 from src.models.autoencoder import AutoEncoder
 from src.data.load_data import importDataloader
-from src.train.util import progess_visualization
 
 
-# includes code from: https://www.kaggle.com/code/kanncaa1/recurrent-neural-network-with-pytorch/notebook
 
 
 # train autoencoder on specified dataset. 
@@ -23,7 +21,7 @@ def trainAutoencoder(hyperparameters, options):
     layer_dim = hyperparameters['layer_dim']
     output_dim = hyperparameters['output_dim'][dataset_name]
     batch_size = hyperparameters['batch_size']
-    num_epochs = hyperparameters['num_epochs']
+    num_epochs = hyperparameters['num_epochs'][dataset_name]
     learning_rate = hyperparameters['learning_rate']
     
     # for storage and logging
@@ -60,33 +58,7 @@ def trainAutoencoder(hyperparameters, options):
     # store model & learning info as .csv
     torch.save(model, options['saved_model_path'] + model_name)
     df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
-    df.to_csv(path_or_buf=options['figure_path'] + model_name.csv)        
-
-    
-    """ if options['finetune']:
-        
-        fine_tune_dataset_name = options['fine_tune_dataset_name']
-        fine_tune_output_dim = hyperparameters['output_dim'][options['fine_tune_dataset_name']]
-        
-        # replace last layer to accomodate for new output dimensions
-        model.fc = nn.Linear(hidden_dim, fine_tune_output_dim)
-        fine_tune_optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-
-        # load fine tune dataset
-        (fine_tune_train_loader, fine_tune_test_loader) = importDataloader(path_to_data=path_to_data,
-                                                                            dataset=fine_tune_dataset_name,
-                                                                            batch_size=batch_size)
-        
-        # finetune RNN
-        (iteration_list, loss_list, accuracy_list) =  trainingLoop(model=model, 
-                                                                    optimizer=fine_tune_optimizer, 
-                                                                    num_epochs=num_epochs,
-                                                                    train_loader=fine_tune_train_loader,
-                                                                    test_loader=fine_tune_test_loader)
-        
-        torch.save(model, options['saved_model_path'] + model_name)
-        df = pd.DataFrame(list(zip(iteration_list,loss_list,accuracy_list)))
-        df.to_csv(path_or_buf=options['figure_path'] + 'fine_tune' + model_name.csv)       """  
+    df.to_csv(path_or_buf=options['figure_path'] + model_name + '.csv')   
 
         
     return model
